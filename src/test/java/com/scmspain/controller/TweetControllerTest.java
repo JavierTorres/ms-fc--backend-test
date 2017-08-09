@@ -81,7 +81,6 @@ public class TweetControllerTest {
         mockMvc.perform(discardTweet(null))
                 .andExpect(status().is(400));
     }
-    Breaking the law dfkmsl mfksmfdsm klsfm klmsf mskfmskld mlsfmls mkflms lfmklsmfkl smfklsmlsmflksm klsfmkl smfklsmlk smfkl mslkf mls fslmklfm
 
     @Test
     public void shouldReturn204WhenDiscardingANotFoundTweet() throws Exception {
