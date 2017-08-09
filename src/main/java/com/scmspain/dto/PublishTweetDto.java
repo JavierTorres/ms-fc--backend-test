@@ -1,7 +1,16 @@
-package com.scmspain.controller.command;
+package com.scmspain.dto;
 
-public class PublishTweetCommand {
+import com.scmspain.entity.Tweet;
+import org.hibernate.validator.constraints.NotEmpty;
+
+/**
+ * Created by Javier Bracero Torres on 09/08/2017.
+ */
+public class PublishTweetDto {
+    @NotEmpty
     private String publisher;
+
+    @NotEmpty
     private String tweet;
 
     public String getPublisher() {
@@ -18,5 +27,9 @@ public class PublishTweetCommand {
 
     public void setTweet(String tweet) {
         this.tweet = tweet;
+    }
+
+    public Tweet toTweet() {
+        return new Tweet().setTweet(tweet).setPublisher(publisher);
     }
 }

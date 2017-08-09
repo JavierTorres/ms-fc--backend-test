@@ -1,41 +1,48 @@
 package com.scmspain.controller;
 
-import com.scmspain.controller.command.PublishTweetCommand;
-import com.scmspain.entities.Tweet;
-import com.scmspain.services.TweetService;
+import com.scmspain.api.TweetServiceApi;
+import com.scmspain.dto.DiscardTweetDto;
+import com.scmspain.dto.PublishTweetDto;
+import com.scmspain.entity.Tweet;
+import com.scmspain.service.TweetService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
+@RequestMapping("/tweet")
 public class TweetController {
-    private TweetService tweetService;
+    private TweetServiceApi tweetService;
 
-    public TweetController(TweetService tweetService) {
+    @Autowired
+    public TweetController(TweetServiceApi tweetService) {
         this.tweetService = tweetService;
     }
 
-    @GetMapping("/tweet")
+    @GetMapping
     public List<Tweet> listAllTweets() {
         return this.tweetService.listAllTweets();
     }
 
-    @PostMapping("/tweet")
+    @PostMapping
     @ResponseStatus(CREATED)
-    public void publishTweet(@RequestBody PublishTweetCommand publishTweetCommand) {
-        this.tweetService.publishTweet(publishTweetCommand.getPublisher(), publishTweetCommand.getTweet());
+    public Tweet publishTweet(@RequestBody @Valid PublishTweetDto publishTweetDto) {
+        return tweetService.publishTweet(publishTweetDto.toTweet());
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(BAD_REQUEST)
-    @ResponseBody
-    public Object invalidArgumentException(IllegalArgumentException ex) {
-        return new Object() {
-            public String message = ex.getMessage();
-            public String exceptionClass = ex.getClass().getSimpleName();
-        };
+    @PostMapping(path = "/discarded")
+    @ResponseStatus(NO_CONTENT)
+    public void discard(@RequestBody @Valid DiscardTweetDto discardTweetDto) {
+        tweetService.discardTweet(discardTweetDto.getTweet());
+    }
+
+    @GetMapping(path = "/discarded")
+    public List<Tweet> listDiscardedTweets() {
+        return this.tweetService.listDiscardedTweets();
     }
 }
